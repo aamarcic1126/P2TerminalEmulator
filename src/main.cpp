@@ -1,5 +1,5 @@
 #include "terminal.h"
 
 int main() {
-	terminal_app();
+    terminal_app();
 }
