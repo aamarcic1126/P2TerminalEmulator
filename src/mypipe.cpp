@@ -24,16 +24,14 @@ void mypipe::redirect() {
 }
 
 std::string mypipe::read() {
-	std::array<char, 256> buf;
-
-	// read bytes to buf, buf.data() gives raw pointer
-	std::size_t bytes;
-	bytes = ::read(fd[0], buf.data(), buf.size());
-
-	if (bytes > 0) {
-		return std::string{buf.data(), bytes};
-	}
-	else {
-		return {};
-	}
+    ::close(fd[1]);               // close write end in parent
+    std::array<char,256> buf;
+    std::string out;
+    ssize_t n;
+    // loop if you want to drain fully
+    while ((n = ::read(fd[0], buf.data(), buf.size())) > 0) {
+        out.append(buf.data(), n);
+    }
+    ::close(fd[0]);
+    return out;
 }
